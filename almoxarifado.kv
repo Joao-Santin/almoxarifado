@@ -1,0 +1,217 @@
+#:kivy 2.2.1
+#:import utils kivy.utils
+<MainScreen>:
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba: (233/255, 196/255, 106/255, 1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        orientation: 'vertical'
+        background_color: 'black'
+        BoxLayout:
+            spacing: 10
+            orientation: 'horizontal'
+            BoxLayout:
+                size_hint:0.5, 1
+                orientation: 'vertical'
+                Label:
+                    text: "ADICIONAR"
+                    color: "black"
+                    size_hint: 1, 0.2
+                Button:
+                    text: "funcionario"
+                    on_release: root.switch_to_adicionar_funcionario()
+                Button:
+                    text: "categoria"
+                    on_release: root.switch_to_adicionar_categoria()
+                Button:
+                    text: "emergencias"
+                    on_release: root.switch_to_compras_screen()
+                Button:
+                    text: "historico"
+                    on_release: root.switch_to_historico_screen()
+            BoxLayout:
+                orientation: 'vertical'
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint: 1, 0.07
+                    TextInput:
+                        id: text_input_search
+                    Button:
+                        size_hint: 0.5, 1
+                        id: button_search
+                        text: "confirm"
+                        color: "green"
+                        on_release: root.refresh()
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint: 1, 0.07
+                    Button:
+                        id: botao_categorias
+                        text: 'geral'
+                        on_release: root.troca_categoria_item()
+                ScrollView:
+                    MDList:
+                        background_color: 'black'
+                        id: container_itens
+            BoxLayout:
+                orientation: 'vertical'
+                Button:
+                    id: botao_troca
+                    size_hint: 1, 0.28
+                    text: "ajuste item"
+                    on_release: root.troca_tipo()
+                    background_color: (233/255, 196/255, 106/255, 1)
+                BoxLayout:
+                    id: box_layout_nome
+                    orientation:'horizontal'
+                    Label:
+                        text: "Nome item:"
+                BoxLayout:
+                    id: box_layout_quantidade
+                    orientation: 'horizontal'
+                    Label:
+                        text: "Quantidade:"
+                BoxLayout:
+                    id: box_layout_limite
+                    orientation: 'horizontal'
+                    Label:
+                        text: "Limite"
+                    Label:
+                        id: limite
+                BoxLayout:
+                    orientation: 'horizontal'
+                    id: box_layout_localizacao 
+                    Label:
+                        text: "Localização"
+                    Label:
+                        id: localizacao
+                BoxLayout:
+                    orientation:'horizontal'
+                    id: box_layout_funcionario
+                    Label:
+                        text:'Funcionário:'
+                    Button:
+                        id: botao_selecionar_funcionario
+                        text:'Selecionar funcionário!'
+                        on_release: root.switch_to_selecionar_funcionario()
+                BoxLayout:
+                    orientation:'horizontal'
+                    id: retirada
+                BoxLayout:
+                    orientation:'horizontal'
+                    id: botoes
+
+
+<SelecaoFuncionarioScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        ScrollView:
+            MDList:
+                background_color: 'black'
+                id: container_selecao
+
+
+<AdicionarFuncionario>:
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba: (233/255, 196/255, 106/255, 1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        orientation: 'vertical'
+        background_color: 'black'
+        BoxLayout:
+            orientation: 'horizontal'
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: "Funcionários registrados"
+                    size_hint: 1, 0.1
+                ScrollView:
+                    MDList:
+                        background_color: 'black'
+                        id: container_funcionarios
+            BoxLayout:
+                orientation: 'vertical'
+                id: box_layout_direita
+                BoxLayout:
+                    id: box_layout
+                    orientation: 'horizontal'
+                    Label:
+                        id: criar_editar
+                BoxLayout:
+                    orientation: 'horizontal'
+                    Label:
+                        text: "Nome:"
+                    TextInput:
+                        id: text_input_nome
+                BoxLayout:
+                    orientation: 'horizontal'
+                    Label:
+                        text: "Telefone:"
+                    TextInput:
+                        id: text_input_telefone
+                BoxLayout:
+                    orientation: 'horizontal'
+                    Label:
+                        text: "Data ultima retirada:"
+                    Label:
+                        id: data_ultima_retirada
+                BoxLayout:
+                    orientation: "horizontal"
+                    Label:
+                        text: "Item retirado:"
+                    Label:
+                        id: item_retirado
+                BoxLayout:
+                    orientation: "horizontal"
+                    id: ultimo_box_layout
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: 1, 0.1
+            Button:
+                text: "voltar"
+                on_release: root.switch_to_main_screen()
+            
+<ComprasScreen>:
+    BoxLayout:
+        orientation:'vertical'
+        ScrollView:
+            MDList:
+                background_color: 'black'
+                id: container_emergencias
+        Button:
+            size_hint: 1, 0.1
+            text:'voltar'
+            on_release: root.switch_to_main_screen()
+
+<AdicionarCategoriaScreen>:
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba: (233/255, 196/255, 106/255, 1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        orientation: 'vertical'
+        background_color: 'black'
+        BoxLayout:
+            Button:
+                text: "voltar"
+                on_release: root.switch_to_main_screen()
+
+<HistoricoScreen>:
+    BoxLayout:
+        orientation:'vertical'
+        ScrollView:
+            MDList:
+                background_color: 'black'
+                id: container_historico
+        Button:
+            size_hint: 1, 0.1
+            text:'voltar'
+            on_release: root.switch_to_main_screen()
