@@ -27,9 +27,6 @@
                     text: "categoria"
                     on_release: root.switch_to_adicionar_categoria()
                 Button:
-                    text: "emergencias"
-                    on_release: root.switch_to_compras_screen()
-                Button:
                     text: "historico"
                     on_release: root.switch_to_historico_screen()
             BoxLayout:
@@ -156,6 +153,37 @@
                     TextInput:
                         id: text_input_telefone
                 BoxLayout:
+                    Label:
+                        text: "-------roupas-------"
+                Button:
+                    text:"gerar pedido uniformes"
+                    on_release: root.switch_to_uniforme_screen()
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    Label:
+                        text: "medida camisa:"
+                    TextInput:
+                        id: text_input_camisa
+                BoxLayout:
+                    orientation: 'horizontal'
+                    Label:
+                        text: "medida calça:"
+                    TextInput:
+                        id: text_input_calca
+                BoxLayout:
+                    orientation: 'horizontal'
+                    Label:
+                        text: "medida blusa:"
+                    TextInput:
+                        id: text_input_blusa
+                BoxLayout:
+                    orientation: 'horizontal'
+                    Label:
+                        text: "medida sapato:"
+                    TextInput:
+                        id: text_input_sapato
+                BoxLayout:
                     orientation: 'horizontal'
                     Label:
                         text: "Data ultima retirada:"
@@ -215,3 +243,41 @@
             size_hint: 1, 0.1
             text:'voltar'
             on_release: root.switch_to_main_screen()
+<UniformeScreen>:
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba: (233/255, 196/255, 106/255, 1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        orientation: 'vertical'
+        background_color: 'black'
+        Label:
+            text: "COMPRAR ROUPAS"
+        BoxLayout:
+            BoxLayout:
+                ScrollView:
+                    MDList:
+                        id: md_list
+        BoxLayout:
+            BoxLayout:
+                TextInput:
+
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: 'camisa'
+            Button:
+                text: 'calça'
+            Button:
+                text: 'blusa'
+            Button:
+                text: 'sapato'
+        BoxLayout:
+            orientation:'horizontal'
+            Button:
+                text: 'gerar pedido'
+            Button:
+                text: 'cancelar' 
+            

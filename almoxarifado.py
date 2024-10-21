@@ -6,7 +6,6 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
 from back.mongodb import Usuarios, Itens, Historico
-from back.email_automatico import envio_email
 from objetos.funcionario import Funcionario
 from objetos.item import Item
 # esse aqui será usado no futuro
@@ -310,8 +309,8 @@ class AdicionarFuncionario(Screen):
         self.refresh()
 
     def add_perfil(self):
-        novo_usuario = Funcionario(self.ids.text_input_nome.text, self.ids.text_input_telefone.text)
-        Usuarios.create(novo_usuario)
+        novo_usuario = Funcionario(self.ids.text_input_nome.text, self.ids.text_input_telefone.text, self.ids.text_input_camisa.text, self.ids.text_input_calca.text, self.ids.text_input_blusa.text, self.ids.text_input_sapato.text)
+        Usuarios.create(novo_usuario.json())
         Historico.create(novo_usuario)
         self.refresh()
 
@@ -320,18 +319,36 @@ class AdicionarFuncionario(Screen):
         self.nome_selecionado = ""
         self.telefone_selecionado = ""
         self.id_selecionado = ""
+        self.camisa = ""
+        self.calca = ""
+        self.blusa = ""
+        self.sapato = ""
         self.refresh()
 
     def atualizar_perfil(self):
-        update_usuario = Funcionario(self.ids.text_input_nome.text, self.ids.text_input_telefone.text)
+        update_usuario = Funcionario(self.ids.text_input_nome.text, self.ids.text_input_telefone.text, self.ids.text_input_camisa.text, self.ids.text_input_calca.text, self.ids.text_input_blusa.text, self.ids.text_input_sapato.text).json()
+
         Usuarios.update(self.id_selecionado, update_usuario)
         self.refresh()
 
     def selecionar(self, nome, telefone, id_selecionado):
-        print(nome, telefone)
+        print(id_selecionado)
+        user = Usuarios.read_one(id_selecionado)
+        print(user)
         self.nome_selecionado = nome
         self.telefone_selecionado = telefone
         self.id_selecionado = id_selecionado
+        if user is not None:
+            if 'camisa' in user:
+                self.camisa = user['camisa'] 
+                self.calca = user['calca']
+                self.blusa = user['blusa']
+                self.sapato = user['sapato']
+            else:
+                self.camisa = ''
+                self.calca = ''
+                self.blusa = ''
+                self.sapato = ''
         self.criar_perfil = False
         self.refresh()
 
@@ -380,6 +397,10 @@ class AdicionarFuncionario(Screen):
                         size_hint=(0.25, 1)))
             self.ids.text_input_nome.text = self.nome_selecionado
             self.ids.text_input_telefone.text = self.telefone_selecionado
+            self.ids.text_input_camisa.text = self.camisa
+            self.ids.text_input_calca.text = self.calca
+            self.ids.text_input_blusa.text = self.blusa
+            self.ids.text_input_sapato.text = self.sapato
             self.ids.ultimo_box_layout.add_widget\
                 (Button(text="Remover!",
                         background_color="red",
@@ -388,6 +409,8 @@ class AdicionarFuncionario(Screen):
                 (Button(text="Atualizar!",
                         background_color="green",
                         on_release=lambda x=None: self.atualizar_perfil()))
+    def switch_to_uniforme_screen(self):
+        self.manager.current = "uniforme_screen"
 
     def switch_to_main_screen(self):
         self.manager.current = "main_screen"
@@ -412,25 +435,8 @@ class ComprasScreen(Screen):
         super().__init__(**kwargs)
 
     def on_pre_enter(self, *args):
-        self.ids.container_emergencias.clear_widgets()
-        lista_comprar = []
-        lista_comprar.clear()
-        print("entrando compras screen")
-        lista = Itens.read()
-        for item in lista:
-            if int(item['quantidade']) < int(item['limite']):
-                quantidade_comprar = int(item['limite']) - int(item['quantidade'])
-                self.ids.container_emergencias.add_widget\
-                    (ThreeLineListItem(text=item['nome'],
-                                    secondary_text="quantidade atual: "\
-                                        +item['quantidade']+" || limite: "+item['limite'],
-                                        tertiary_text="comprar: "+str(quantidade_comprar)))
-                lista_comprar.append(item)
-        self.envio_email(lista_comprar)
+        pass
 
-    def envio_email(self, lista_comprar):
-        if len(lista_comprar) >= 1:
-            envio_email()
     def switch_to_main_screen(self):
         self.manager.current = "main_screen"
 
@@ -448,6 +454,50 @@ class HistoricoScreen(Screen):
     def refresh(self):
         Historico.read()
 
+class UniformeScreen(Screen):
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        
+
+    def on_pre_enter(self, *args):
+        camisas = {}
+        calcas = {}
+        blusas = {}
+        sapatos = {}
+        print("hello world!")
+        for func in Usuarios.read():
+            print(func)
+            for chave, valor in func.items():
+                if chave == 'camisa':
+                    if valor in camisas:
+                        camisas[str(valor)] = camisas[str(valor)] + 1
+                    else:
+                        camisas[str(valor)] = 1
+                if chave == 'calca':
+                    if valor in calcas:
+                        calcas[str(valor)] = calcas[str(valor)] + 1
+                    else:
+                        calcas[str(valor)] = 1
+
+                if chave == 'blusa':
+                    if valor in blusas:
+                        blusas[str(valor)] = blusas[str(valor)] + 1
+                    else:
+                        blusas[str(valor)] = 1
+
+                if chave == 'sapato':
+                    if valor in sapatos:
+                        sapatos[str(valor)] = sapatos[str(valor)] + 1
+                    else:
+                        sapatos[str(valor)] = 1
+        roupas = [camisas, calcas, blusas, sapatos]
+        roupas_id = ['camisa', 'calça', 'blusa', 'sapato']
+        for roupa in roupas:
+            for roupa_id in roupas_id:
+                for chave, valor in roupa.items():
+                    if chave != '':
+                         self.ids.md_list.add_widget(ThreeLineListItem(text=roupa_id+" "+chave, secondary_text=str(valor), tertiary_text=str(len(self.ids.md_list.children))))
+        return super().on_pre_enter(*args)
 
 class AlmoxarifadoApp(MDApp):
     def build(self):
@@ -458,6 +508,7 @@ class AlmoxarifadoApp(MDApp):
         sm.add_widget(HistoricoScreen(name="historico_screen"))
         sm.add_widget(SelecaoFuncionarioScreen(name="selecionar_funcionario_screen"))
         sm.add_widget(AdicionarFuncionario(name="adicionar_funcionario_screen"))
+        sm.add_widget(UniformeScreen(name="uniforme_screen"))
         sm.add_widget(AdicionarCategoriaScreen(name="adicionar_categoria_screen"))
         sm.add_widget(ComprasScreen(name="compras_screen"))
         return sm

@@ -17,16 +17,16 @@ almoxarifado_historico = biplas_db.almoxarifado_historico
 
 class Usuarios:
   @staticmethod
-  def create(objeto):
-    usuario = {
-      "nome": objeto.nome,
-      "telefone": objeto.telefone
-    }
+  def create(dicionario):
     try:
-      almoxarifado_usuarios.insert_one(usuario)
-    except:
-      return print("sem internet")
-
+      almoxarifado_usuarios.insert_one(dicionario)
+    except Exception:
+      print('nao foi possivel, erro:', Exception)
+  @staticmethod
+  def read_one(idd):
+    from bson.objectid import ObjectId
+    _id = ObjectId(idd)
+    return almoxarifado_usuarios.find_one({"_id":_id})
   @staticmethod
   def read():
     lista = []
@@ -38,14 +38,10 @@ class Usuarios:
       return ['deu', 'erro', 'nessa', 'lista'] # só para fazer uma graça
     
   @staticmethod  
-  def update(id, objeto):
+  def update(id, dicionario):
     from bson.objectid import ObjectId
     _id = ObjectId(id)
-    novo_documento = {
-      "nome": objeto.nome,
-      "telefone": objeto.telefone
-    }
-    almoxarifado_usuarios.replace_one({"_id": _id}, novo_documento)
+    almoxarifado_usuarios.replace_one({"_id": _id}, dicionario)
 
 
   @staticmethod
